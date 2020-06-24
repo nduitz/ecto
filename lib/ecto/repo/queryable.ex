@@ -101,9 +101,10 @@ defmodule Ecto.Repo.Queryable do
   defp rewrite_combinations(%{combinations: []} = query), do: query
 
   defp rewrite_combinations(%{combinations: combinations} = query) do
-    combinations = Enum.map(combinations, fn {type, query} ->
-      {type, query |> Query.exclude(:select) |> Query.select(1)}
-    end)
+    combinations =
+      Enum.map(combinations, fn {type, query} ->
+        {type, query |> Query.exclude(:select) |> Query.select(1)}
+      end)
 
     %{query | combinations: combinations}
   end
@@ -286,9 +287,8 @@ defmodule Ecto.Repo.Queryable do
         {%{}, nil} ->
           left
 
-        {_, %{}} ->
-          raise ArgumentError,
-                "cannot merge because the left side is not a map, got: #{inspect(left)}"
+        {nil, %{}} ->
+          nil
 
         {%{}, _} ->
           raise ArgumentError,
